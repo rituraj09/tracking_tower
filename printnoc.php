@@ -150,7 +150,27 @@ The permission has been applied on the land or building mentioned below.</p>
 <?php if($owner_name!='NA'){ echo $owner_name.'; ';} echo $owner_location ?>
 </td>
 <td valign="top" style="padding:7px;">
-Plot No.: Dag No. <?php echo $dagno ?>; Patta No.: <?php echo $pattano ?><br>
+Plot No.: Dag No. 
+
+<?php
+if($dagno == '0'){
+echo 'NA';
+}
+else{
+echo $dagno ;
+}
+?>; 
+
+
+Patta No.: <?php
+if($pattano == '0'){
+echo 'NA';
+}
+else
+{
+  echo $pattano ;
+}
+?><br>
 Plot Type: <?php echo $plottype ?><br>
 Tower Type: <?php echo $towertype ?>
 

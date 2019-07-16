@@ -155,8 +155,11 @@
       <?php echo $r["co"];?>
       </td>
       <td class='no-print'> 
-      <a class='btn btn-xs btn-info' 
-       href='addreminder.php?letter=<?php echo $r["fileno"];  ?>' >Add Reminder</a> 
+      <?php if( $_SESSION['type']=="3")
+ {  }
+ else{ ?>
+      <a class='btn btn-xs btn-info'  
+       href='addreminder.php?letter=<?php echo $r["fileno"];  ?>' >Add Reminder</a> <?php } ?>
        <?php if ($r1->num_rows > 0)
             { ?>
       <a class='btn btn-xs btn-success' style="margin-left:10px" 

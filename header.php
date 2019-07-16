@@ -68,7 +68,20 @@ function validation(){
     <div class="navbar-header">
       <a class="navbar-brand" href="#">Tracking Tower</a>
     </div> 
-   
+    <?php 
+session_start();
+if( $_SESSION['id']=="")
+{        
+ header('Location: index.php');
+}
+
+ 
+if(isset($_SESSION['id']))
+{
+    $uid = $_SESSION['id'];
+    if( $uid!= "")
+    {
+    ?>
         <ul class="nav navbar-nav"> 
         <li ><a href="application.php">Add Application</a></li> 
         <li ><a href="status.php">Update Status</a></li> 
@@ -84,8 +97,26 @@ function validation(){
       <li ><a href="map.php">Map</a></li>   
         </ul> 
     
+        <ul class="nav navbar-nav navbar-right">
+        <li class="active">
+        <a href="#"> <?php
+ if($uid!="")
+ { 
+ echo "Hi,".$_SESSION['name']  ;
+ }  
+ ?></a>
+        </li>
+        <li  style="float:right"><a href="logout.php">Logout</a></li> 
+</ul>
     
- 
+<?php }
+ }
+ else
+ {?>
+    <ul class="nav navbar-nav"> 
+        <li ><a href="index.php">Login</a></li>   
+        </ul>  
+<?php  } 
 
 ?>
   </div>

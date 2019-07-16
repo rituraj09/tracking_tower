@@ -13,7 +13,42 @@
     if(isset($_REQUEST['id']))
     {  
         $pid=$_REQUEST['pid'];
-        $page=$_REQUEST['page'];
+        
+        $a1 = $a2 = $a3 = $p1='';
+        $qrystr="";
+        if (isset($_REQUEST['ddco'])) 
+        {
+           if ($_REQUEST['ddco'] != '') 
+           { 
+              $a1= '&ddco='. $_REQUEST['ddco']; 
+           }
+        }
+        if (isset($_REQUEST['status']))  
+        {
+           if ($_REQUEST['status']!='') 
+           { 
+              $a2= '&status='. $_REQUEST['status']; 
+           }
+        }
+        if (isset($_REQUEST['siteid']))
+        {
+           if ($_REQUEST['siteid']!='') 
+           { 
+              $a3= '&siteid='.$_REQUEST['siteid']; 
+           }
+        }   
+        if(isset($_REQUEST['currentpage']) )
+        {
+           if($_REQUEST['currentpage']!='')
+           {
+              $p1='currentpage='.$_REQUEST['currentpage'];
+           }
+        }
+        if(isset($_REQUEST['currentpage']) || isset($_REQUEST['ddco']) || isset($_REQUEST['status']) || isset($_REQUEST['siteid']))
+        { 
+           $qrystr = $p1.$a1.$a2.$a3;
+        }
+
         $id=$_REQUEST['id']; 
         $details = mysqli_query($mysqli,"SELECT a.*, b.site_id, s.curr_status from  track a inner join master_application b on a.app_id=b.id  inner join status s on a.app_status=s.id where a.id= $id and a.is_delete=0"); 
         while($r= mysqli_fetch_array($details)) {   
@@ -57,7 +92,7 @@
 <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
-        <a class="btn btn-danger pull-right" href="details.php?id=<?php echo $pid ?>&page=<?php echo $page ?>">Back</a>
+        <a class="btn btn-danger pull-right" href="details.php?id=<?php echo $pid ?><?php echo '&'.$qrystr ?>">Back</a>
     </div>
 </div>
 <div class="row">
@@ -139,7 +174,7 @@ Status.<span class="textmand">*</span>
 <td></td>
 <td>
 <input type="submit" name="Submit" value="Update" class="btn btn-info"  >
-        <a class="btn btn-danger" href="details.php?id=<?php echo $pid ?>&page=<?php echo $page ?>">Back</a>
+        <a class="btn btn-danger" href="details.php?id=<?php echo $pid ?><?php echo '&'.$qrystr ?>">Back</a>
 </td>
  <td></td>
 </tr>

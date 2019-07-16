@@ -24,7 +24,7 @@
     $ddno="";
     $dddate="";
     $ddstatus = "";
-    $ddremarks = "";
+    $dd_remarks = "";
     $receivedon =   "" ;
     $remarks =   ""; 
     if(isset($_POST['Submit']))
@@ -35,13 +35,12 @@
         $location =  $_POST['location'];
         $circleoffice =  $_POST['ddco'];
         $dagno =  $_POST['dag'];
-        $patta =  $_POST['patta'];
-
-        $year =  $_POST['year']; 
+        $patta =  $_POST['patta']; 
         $plot_type =  $_POST['plot_type'];
         $tower_type =  $_POST['tower_type'];
         $length =  $_POST['length'];
         $width =  $_POST['width'];       
+
         $date = explode('-', $_POST['dateupto']);
         $day   = $date[0];
         $month = $date[1];
@@ -53,7 +52,7 @@
         $ddno =  $_POST['ddno'];
         $dddate = date('Y-m-d', strtotime($_POST['dddate'])); 
         $ddstatus =  $_POST['ddstatus'];
-        $ddstatus =  $_POST['dd_remarks'];
+        $dd_remarks =  $_POST['dd_remarks'];
         $receivedon =  date('Y-m-d', strtotime($_POST['recon']));  
         $remarks =  $_POST['remarks']; 
         $ok="0";
@@ -73,16 +72,15 @@
                 }
         }      
         if($isok=="1") {       
-            $sql="INSERT INTO master_application(company_id , site_id, owner_name, owner_address, co_id, dagno, pattano,plot_type,tower_type,length,width,validity lattitude, longitude, dd_no, dd_date, dd_status, receivedon, remarks, curr_status) value(
-                '$company','$siteid','$name','$location','$circleoffice','$dagno','$patta','$plot_type','$tower_type','$length','$width','$dateupto','$latt','$long','$ddno','$dddate','$ddstatus','$receivedon','$remarks',1
-                )";
-
+            $sql="INSERT INTO master_application(company_id , site_id, owner_name, owner_address, co_id, dagno, pattano,plot_type,tower_type,length,width,validity, lattitude, longitude, dd_no, dd_date, dd_status,dd_remarks, receivedon, remarks, curr_status) value(
+                '$company','$siteid','$name','$location','$circleoffice','$dagno','$patta','$plot_type','$tower_type','$length','$width','$dateupto','$latt','$long','$ddno','$dddate','$ddstatus','$dd_remarks','$receivedon','$remarks',1
+                )"; 
                 $result=mysqli_query($mysqli,$sql);
                 if($result=="1")
                 {
                     $app_id= $mysqli->insert_id;
                     $sql1 = mysqli_query($mysqli,"INSERT INTO track (app_id , app_status,remarks) value ($app_id, 1,'$remarks')");
-                   
+                 
                     $ok="1";
                 } 
                 if( $ok=="1"){
@@ -106,7 +104,7 @@
                     $ddno="";
                     $dddate="";
                     $ddstatus = "";
-                    $ddremarks = "";
+                    $dd_remarks = "";
                     $receivedon =   "" ;
                     $remarks =   ""; 
                   }
@@ -397,7 +395,12 @@ Remarks
 <tr>
 <td></td>
 <td>
+<?php if( $_SESSION['type']=="3")
+ {  }
+ else{ ?>
 <input type="submit" name="Submit" value="Save" class="btn btn-info"  >
+<?php }
+?>
 </td>
  <td></td>
 </tr>

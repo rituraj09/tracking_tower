@@ -157,7 +157,11 @@ Remarks
 <tr>
 <td></td>
 <td>
+<?php if( $_SESSION['type']=="3")
+ {  }
+ else{ ?>
 <input type="submit" name="Submit" value="Save" class="btn btn-info"  >
+<?php } ?>
 </td>
 <td></td>
 </tr>
@@ -205,10 +209,10 @@ Remarks
         $('#trsiteid').show();
          $('#trremarks').show();
          
-         $('#trfileno').show();
-         $('#trdate').show();
-         $('#txtfileno').attr('required', true);
-         $('#txtdate').attr('required', true);
+         $('#trfileno').hide();
+         $('#trdate').hide();
+         $('#txtfileno').removeAttr('required');
+         $('#txtdate').removeAttr('required');
      }
      else if(val==5)
      {
@@ -225,10 +229,10 @@ Remarks
         $('#trsiteid').show();
          $('#trremarks').show();
          
-         $('#trfileno').show();
-         $('#trdate').show();
-         $('#txtfileno').attr('required', true);
-         $('#txtdate').attr('required', true);
+         $('#trfileno').hide();
+         $('#trdate').hide();
+         $('#txtfileno').removeAttr('required');
+         $('#txtdate').removeAttr('required');
      }
      else if(val==7)
      {

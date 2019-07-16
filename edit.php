@@ -30,7 +30,43 @@
     if(isset($_REQUEST['id']))
     {  
         $id=$_REQUEST['id'];
-        $page=$_REQUEST['page'];
+          
+        $a1 = $a2 = $a3 = $p1='';
+        $qrystr="";
+        if (isset($_REQUEST['ddco'])) 
+        {
+           if ($_REQUEST['ddco'] != '') 
+           { 
+              $a1= '&ddco='. $_REQUEST['ddco']; 
+           }
+        }
+        if (isset($_REQUEST['status']))  
+        {
+           if ($_REQUEST['status']!='') 
+           { 
+              $a2= '&status='. $_REQUEST['status']; 
+           }
+        }
+        if (isset($_REQUEST['siteid']))
+        {
+           if ($_REQUEST['siteid']!='') 
+           { 
+              $a3= '&siteid='.$_REQUEST['siteid']; 
+           }
+        }   
+        if(isset($_REQUEST['currentpage']) )
+        {
+           if($_REQUEST['currentpage']!='')
+           {
+              $p1='currentpage='.$_REQUEST['currentpage'];
+           }
+        }
+        if(isset($_REQUEST['currentpage']) || isset($_REQUEST['ddco']) || isset($_REQUEST['status']) || isset($_REQUEST['siteid']))
+        { 
+           $qrystr = $p1.$a1.$a2.$a3;
+        }
+
+
         $details = mysqli_query($mysqli,"SELECT * from  master_application where id= $id and is_delete=0"); 
         while($r= mysqli_fetch_array($details)) {   
             $p_company =  $r["company_id"];
@@ -140,7 +176,7 @@
 <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
-        <a class="btn btn-danger pull-right" href="view.php?currentpage=<?php echo $page ?>">Back</a>
+        <a class="btn btn-danger pull-right" href="view.php?<?php echo $qrystr  ?>">Back</a>
     </div>
 </div>
 <div class="row">
@@ -424,8 +460,12 @@ Remarks
 <tr>
 <td></td>
 <td>
-<input type="submit" name="Submit" value="Update" class="btn btn-info"  >
-        <a class="btn btn-danger" href="view.php?currentpage=<?php echo $page ?>">Back</a>
+<?php if( $_SESSION['type']=="3")
+ {  }
+ else{ ?>
+<input type="submit" name="Submit" value="Update" class="btn btn-info"  ><?php }
+?>
+        <a class="btn btn-danger" href="view.php?<?php echo $qrystr  ?>">Back</a>
 </td>
  <td></td>
 </tr>

@@ -40,6 +40,7 @@ table tr th{
  $siteid="";
  $status="";
  $co_id="";
+ $a1 = $a2 = $a3 = $p1='';
  $co = mysqli_query($mysqli,"SELECT id, name  from  circle_office"); 
  $c_status = mysqli_query($mysqli,"SELECT id, curr_status  from  status where id<10"); 
  
@@ -49,25 +50,39 @@ table tr th{
  $p_co =   ""; 
  $p_status =   ""; 
  $p_siteid =   ""; 
-if(isset($_POST['Submit']))
-{  
-   if($_POST['ddco']!="")
+ $rslt=''; 
+   if (isset($_REQUEST['ddco'])) 
    {
-       $p_co =  " and a.co_id =". $_POST['ddco']; 
-       $co_id = $_POST['ddco'];
+      if ($_REQUEST['ddco'] != '') 
+      {
+         $p_co =  " and a.co_id =". $_REQUEST['ddco']; 
+         $co_id = $_REQUEST['ddco'];
+         $rslt='1';
+         $a1= '&ddco='. $_REQUEST['ddco']; 
+      }
    }
-   if($_POST['status']!="") {
-       $p_status =   " and a.curr_status =".$_POST['status']; 
-       $status=$_POST['status'];
+   if (isset($_REQUEST['status']))  
+   {
+      if ($_REQUEST['status']!='') 
+      {
+         $p_status =   " and a.curr_status =".$_REQUEST['status']; 
+         $status=$_REQUEST['status'];
+         $rslt='1';
+         $a2= '&status='. $_REQUEST['status']; 
+      }
    }
-   if($_POST['siteid']!="") {
-       $siteid = $_POST['siteid'];
-       $p_siteid =   " and a.site_id like '%".$_POST['siteid']."%'"; 
-   } 
-}
- 
+   if (isset($_REQUEST['siteid']))
+   {
+      if ($_REQUEST['siteid']!='') 
+      {
+         $siteid = $_REQUEST['siteid'];
+         $p_siteid =   " and a.site_id like '%".$_REQUEST['siteid']."%'"; 
+         $rslt='1';
+         $a3= '&siteid='.$_REQUEST['siteid']; 
+      }
+   }    
 $sql="";
-if(isset($_POST['Submit']))
+if($rslt==1)
 {
    $sql="SELECT COUNT(a.id)  from  master_application a 
    inner join company_master b on a.company_id=b.id inner join track x on a.id = x.app_id and a.curr_status = x.app_status
@@ -81,7 +96,7 @@ else{
    where  a.is_delete=0";
 }
    $x = mysqli_query($mysqli, $sql) ;
-   $r = mysqli_fetch_row($x);
+   $r = mysqli_fetch_row($x); 
    $numrows = $r[0]; 
 
 // number of rows to show per page
@@ -112,7 +127,7 @@ if ($currentpage < 1) {
 // the offset of the list, based on current page 
 $offset = ($currentpage - 1) * $rowsperpage;
 
-if(isset($_POST['Submit']))
+if($rslt==1)
 {
    $sql = "SELECT a.id, a.dd_status, a.site_id, a.curr_status as sts, b.name as comp, c.name as co, d.curr_status, x.remarks  from  master_application a 
    inner join company_master b on a.company_id=b.id inner join track x on a.id = x.app_id and a.curr_status = x.app_status
@@ -136,10 +151,17 @@ $range = 3;
 
 $sno=($currentpage*20)-19 ; 
 
-$pageid="";
-if(isset($_REQUEST['currentpage']))
+$qrystr="";
+if(isset($_REQUEST['currentpage']) )
+{
+   if($_REQUEST['currentpage']!='')
+   {
+      $p1='currentpage='.$_REQUEST['currentpage'];
+   }
+}
+if(isset($_REQUEST['currentpage']) || isset($_REQUEST['ddco']) || isset($_REQUEST['status']) || isset($_REQUEST['siteid']))
 { 
-   $pageid=$_REQUEST['currentpage'];
+   $qrystr = $p1.$a1.$a2.$a3;
 }
 ?>
 
@@ -153,7 +175,7 @@ if(isset($_REQUEST['currentpage']))
 
 <div class="row"> 
 <div class="col-md-12"> 
-<form action="view.php" method="POST"  name="myform" >
+<form action="view.php" method="get"  name="myform" >
 <table>
 <tr>
 <td>
@@ -221,8 +243,7 @@ Remarks
 
 </th>
 </tr>
-
-<?php $sno=1; while($r= mysqli_fetch_array($result)) { ?>
+<?php  while($r= mysqli_fetch_array($result)) { ?>
 <tr>
 <td  class="<?php
 switch($r["sts"]){  
@@ -255,7 +276,8 @@ switch($r["sts"]){
        break; 
 }
 ?>">
-<?php echo $sno; $sno ++; ?>
+
+<?php echo $sno; $sno ++; ?> 
 </td>
 <td>
 <?php  
@@ -295,8 +317,13 @@ echo $r["remarks"];
 </td>
 <td>
 <?php  $pid=$r["id"] ?>
-<a class='btn btn-xs btn-success' href='details.php?id=<?php  echo $pid ?>&page=<?php echo $pageid ?>'>View</a>
-<a class='btn btn-xs btn-warning' style="margin-left:10px" href='edit.php?id=<?php   echo  $pid ?>&page=<?php echo $pageid ?>'>Edit</a>
+<a class='btn btn-xs btn-success' href='details.php?id=<?php  echo  $pid.'&'.$qrystr  ?>'>View</a>
+<?php if( $_SESSION['type']=="3")
+ {  }
+ else{ ?>
+ <a class='btn btn-xs btn-warning' style="margin-left:10px" href='edit.php?id=<?php   echo  $pid.'&'.$qrystr ?>'>Edit</a> 
+ <?php }
+?>
 </td>
 </tr>
 <?php } ?>
@@ -328,7 +355,7 @@ if ($currentpage > 1) {
        // if not current page...
        } else {
           // make it a link
-          echo " <a href='{$_SERVER['PHP_SELF']}?currentpage=$x'>$x</a> ";
+          echo " <a href='{$_SERVER['PHP_SELF']}?currentpage=$x$a1$a2$a3'>$x</a> ";
        } // end else
     } // end if 
  } // end for
@@ -338,9 +365,9 @@ if ($currentpage > 1) {
     // get next page
     $nextpage = $currentpage + 1;
      // echo forward link for next page 
-    echo " <a href='{$_SERVER['PHP_SELF']}?currentpage=$nextpage'>></a> ";
+    echo " <a href='{$_SERVER['PHP_SELF']}?currentpage=$nextpage$a1$a2$a3'>></a> ";
     // echo forward link for lastpage
-    echo "<a href='{$_SERVER['PHP_SELF']}?currentpage=$totalpages'>>></a>";
+    echo "<a href='{$_SERVER['PHP_SELF']}?currentpage=$totalpages$a1$a2$a3'>>></a>";
  } // end if
  /****** end build pagination links ******/  
  ?>

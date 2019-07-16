@@ -36,8 +36,45 @@
     $page="";
     if(isset($_REQUEST['id']))
     {  
-        $id=$_REQUEST['id'];
-        $page=$_REQUEST['page'];
+        $id=$_REQUEST['id']; 
+
+        $a1 = $a2 = $a3 = $p1='';
+        $qrystr="";
+        if (isset($_REQUEST['ddco'])) 
+        {
+           if ($_REQUEST['ddco'] != '') 
+           { 
+              $a1= '&ddco='. $_REQUEST['ddco']; 
+           }
+        }
+        if (isset($_REQUEST['status']))  
+        {
+           if ($_REQUEST['status']!='') 
+           { 
+              $a2= '&status='. $_REQUEST['status']; 
+           }
+        }
+        if (isset($_REQUEST['siteid']))
+        {
+           if ($_REQUEST['siteid']!='') 
+           { 
+              $a3= '&siteid='.$_REQUEST['siteid']; 
+           }
+        }   
+        if(isset($_REQUEST['currentpage']) )
+        {
+           if($_REQUEST['currentpage']!='')
+           {
+              $p1='currentpage='.$_REQUEST['currentpage'];
+           }
+        }
+        if(isset($_REQUEST['currentpage']) || isset($_REQUEST['ddco']) || isset($_REQUEST['status']) || isset($_REQUEST['siteid']))
+        { 
+           $qrystr = $p1.$a1.$a2.$a3;
+        }
+
+
+
         $details = mysqli_query($mysqli,"SELECT a.* , b.name as comp, c.name as co, d.curr_status as sts, a.curr_status as curr_sts, a.remarks as rmks,
         a.plot_type,a.tower_type,a.length,a.width,a.validity,a.dd_remarks  from  master_application a 
         inner join company_master b on a.company_id=b.id inner join track x on a.id = x.app_id and a.curr_status = x.app_status
@@ -81,7 +118,7 @@
 <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
-        <a class="btn btn-danger pull-right" href="view.php?currentpage=<?php echo $page ?>">Back</a>
+        <a class="btn btn-danger pull-right" href="view.php?<?php echo $qrystr  ?>">Back</a>
     </div>
 </div>
 <div class="row">
@@ -378,7 +415,12 @@ switch($cur_sts){
         <td><?php echo $d["fileno"];?></td>
         <td><?php echo date('d-m-Y', strtotime($d['file_date']))?></td>
         <td><?php echo $d["remarks"];?></td>
-        <td><a class='btn btn-xs btn-warning'  href='edit_track.php?id=<?php   echo  $d["id"] ?>&pid=<?php   echo $id ?>&page=<?php echo $page ?>'>Edit</a>
+        <td>
+        <?php if( $_SESSION['type']=="3")
+ {  }
+ else{ ?>
+        <a class='btn btn-xs btn-warning'  href='edit_track.php?id=<?php   echo  $d["id"] ?>&pid=<?php   echo $id.'&'. $qrystr  ?>'>Edit</a>
+        <?php } ?>
 </td>
     </tr>
     <?php } ?>
@@ -388,9 +430,12 @@ switch($cur_sts){
 <tr>
 <td></td>
 <td>
-
-<a class='btn btn-warning'  href='edit.php?id=<?php   echo  $id ?>&page=<?php echo $page ?>'>Edit</a>
-        <a class="btn btn-danger" href="view.php?currentpage=<?php echo $page ?>">Back</a>
+<?php if( $_SESSION['type']=="3")
+ {  }
+ else{ ?>
+<a class='btn btn-warning'  href='edit.php?id=<?php   echo  $id ?><?php echo '&'.$qrystr  ?>'>Edit</a>
+<?php } ?>
+        <a class="btn btn-danger" href="view.php?<?php echo $qrystr  ?>">Back</a>
 </td>
  <td></td>
 </tr>
